@@ -224,8 +224,15 @@ module.exports = (robot) ->
 
       msg.reply _.join "\n"
 
-  # Listens to #NNNN and gives ticket info
-  robot.respond /.*(#(\d+)).*/, (msg) ->
+  # Listens to "robotname #NNNN" and gives ticket info
+  r = new RegExp "#{robot.name} (\#(\\d+))", "i"
+  prev_msg = ''
+  robot.hear r, (msg) ->
+    if msg.message.text == prev_msg
+      return
+    
+    prev_msg = msg.message.text
+    
     id = msg.match[1].replace /#/, ""
 
     ignoredUsers = process.env.HUBOT_REDMINE_IGNORED_USERS or ""
